@@ -11,10 +11,12 @@
   * アイテムセット制約
     * [x] 線形不等式（整数のみ）
   * 関連する機能
-    * [ ] DdStructure <--> ZBDD の変換
+    * [x] DdStructure <--> ZBDD の変換
     * [ ] 辺の順序付けを行う Beam Search（優先度：低）
 * SAPPOROBDD の拡張としての新規演算
-  * [ ] DisjointJoin, JointJoin など
+  * [x] Power set
+  * [ ] DisjointJoin
+  * [ ] JointJoin
   * [ ] 特定のアイテムを含む/含まない（OnSet などの別名）
   * [ ] 特定のアイテム間の xor
 * 最適化

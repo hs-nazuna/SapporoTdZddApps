@@ -17,8 +17,8 @@ private:
     const int n_vars;
     const int n_rows;
     const std::vector<std::vector<int>>& A;
-    const std::vector<int>& b;
     const std::vector<std::string>& sign;
+    const std::vector<int>& b;
 
     std::vector<std::vector<int>> neg_sum;
     std::vector<std::vector<int>> pos_sum;
@@ -40,9 +40,9 @@ private:
 public:
     LinearIneqSpec(
         const std::vector<std::vector<int>>& A,
-        const std::vector<int>& b,
-        const std::vector<std::string>& sign
-    ) : n_vars(A[0].size()), n_rows(A.size()), A(A), b(b), sign(sign) {
+        const std::vector<std::string>& sign,
+        const std::vector<int>& b
+    ) : n_vars(A[0].size()), n_rows(A.size()), A(A), sign(sign), b(b) {
         setArraySize(n_rows);
         neg_sum.assign(n_rows, std::vector<int>(n_vars + 1, 0));
         pos_sum.assign(n_rows, std::vector<int>(n_vars + 1, 0));

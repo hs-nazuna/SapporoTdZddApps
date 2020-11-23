@@ -3,23 +3,49 @@
 
 #include "sapporo_apps/ext_operations.hpp"
 #include "tdzdd_apps/graph_data.hpp"
-#include "tdzdd_apps/itemset_data.hpp"
 #include "tdzdd_apps/graph_specs.hpp"
 #include "tdzdd_apps/linear_specs.hpp"
 
+#include <tdzdd/spec/SapporoZdd.hpp>
+#include <tdzdd/eval/ToZBDD.hpp>
 #include <tdzdd/DdStructure.hpp>
 
 namespace sapporo_tdzdd_apps {
 
+// for TdZdd
+
 tdzdd::DdStructure<2> tdzdd_linear_inequalities(
     const std::vector<std::vector<int>>& A,
-    const std::vector<int>& b,
-    const std::vector<std::string>& sign
+    const std::vector<std::string>& sign,
+    const std::vector<int>& b
 ) {
-    LinearIneqSpec spec(A, b, sign);
+    LinearIneqSpec spec(A, sign, b);
     tdzdd::DdStructure<2> dd(spec);
     dd.zddReduce();
     return dd;
+}
+
+// for SAPPOROBDD
+
+void check_sapporo_vars(int n, int offset = 0) {
+    while (BDD_VarUsed() < n + offset) BDD_NewVar();
+}
+
+ZBDD zbdd_power_set(int n) {
+    check_sapporo_vars(n);
+	ZBDD f(1);
+	for (int i = 0; i < n; ++i) f = f.Change(BDD_VarOfLev(i + 1)) + f;
+	return f;
+}
+
+// other utilities
+
+tdzdd::DdStructure<2> to_ddstructure(const ZBDD& zbdd) {
+    return tdzdd::DdStructure<2>(tdzdd::SapporoZdd(zbdd));
+}
+
+ZBDD to_zbdd(const tdzdd::DdStructure<2>& dd) {
+    return dd.evaluate(tdzdd::ToZBDD());
 }
 
 std::vector<std::vector<int>> unfold_zdd(

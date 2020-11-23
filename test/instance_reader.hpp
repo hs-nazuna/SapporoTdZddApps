@@ -11,16 +11,18 @@ struct LinearInequalities {
     int n_vars;
     int n_rows;
     std::vector<std::vector<int>> A;
-    std::vector<int> b;
     std::vector<std::string> sign;
+    std::vector<int> b;
 
     LinearInequalities(int n_vars, int n_rows)
     : n_vars(n_vars), n_rows(n_rows),
-      A(n_rows, std::vector<int>(n_vars)), b(n_rows), sign(n_rows) {}
+      A(n_rows, std::vector<int>(n_vars)), sign(n_rows), b(n_rows) {}
 
     void dump(std::ostream& os) {
-        os << n_vars << " " << n_rows << std::endl;
+        os << n_vars << " vars" << std::endl;
+        os << n_rows << " inequalities" << std::endl;
         for (int r = 0; r < n_rows; ++r) {
+            os << "  ";
             for (int i = 0; i < n_vars; ++i) {
                 os << A[r][i] << " x" << i << (i < n_vars - 1 ? " + " : " ") ;
             }
