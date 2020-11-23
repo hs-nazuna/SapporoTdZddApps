@@ -7,7 +7,7 @@
     * s-t パス、サイクル、連結（木、森を含む）、シュタイナー制約
     * 辺の順序付けを行う Beam Search（優先度：低）
   * アイテムセット制約
-    * 一般の線形不等式
+    * 線形不等式（整数のみ）
   * DdStructure <--> ZBDD の変換
 * SAPPOROBDD の拡張としての新規演算
   * DisjointJoin, JointJoin など
