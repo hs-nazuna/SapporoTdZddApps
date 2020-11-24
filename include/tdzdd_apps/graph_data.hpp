@@ -12,14 +12,14 @@
 namespace sapporo_tdzdd_apps {
 
 /*****
- * class GraphData
+ * class Graph
  *      Maintain a graph data (allowing multiple edges).
  *      Assuming that vertex number is non negative.
  *      The graph can be treated as a directed graph such that
  *      an edge v0-v1 corresponds to an arc v0->v1.
  *      Here, an edge a-b and an edge b-a are distinguished.
  * 
- * GraphData()
+ * Graph()
  *      Construct empty graph.
  * 
  * bool add_vertex(int v)
@@ -30,13 +30,27 @@ namespace sapporo_tdzdd_apps {
  *      Add an edge v0-v1.
  *      v0 and v1 must be already added.
  * 
- * int n_vertices() const
+ * int get_n_vertices() const
  *      Get the number of vertices.
  * 
- * int n_edge() const
+ * int get_n_edge() const
  *      Get the number of edges.
  * 
- * int n_items() const
+ * const std::vector<int>& get_edge(int i) const
+ *      Get i'th edge.
+ * 
+ * int get_multiplicity(int i) const
+ *      Get the multiplicity of i'th item in {item 0, item 1, ..., item i}.
+ *      Assuming that i'th item is an edge.
+ *      This function works after calling setup().
+ * 
+ * int get_edge_id(int i) const
+ *      Get the original index of i'th item which must be an edge).
+ * 
+ * void setup()
+ *      Setup for subgraph enumeration.
+ * 
+ * int get_n_items() const
  *      Get the number of items (vertices and edges).
  *      This function works after calling setup().
  * 
@@ -44,32 +58,51 @@ namespace sapporo_tdzdd_apps {
  *      Check the i'th item is a vertex or not.
  *      This function works after calling setup().
  * 
- * int edge_multiplicity(int i) const
- *      Get the multiplicity of i'th item in {item 0, item 1, ..., item i}.
- *      Assuming that i'th item is an edge.
- *      This function works after calling setup().
+ * int get_frontier_size() const
+ *      Get the maximum frontier size.
+ *      For subgraph enumeration.
  * 
- * void setup()
- *      Setup for subgraph enumeration.
+ * int get_frontier_index(int v) const
+ *      Get the frontier index of v.
+ *      For subgraph enumeration.
  * 
- * int frontier_size() const
- *      Get frontier size for subgraph enumeration.
+ * const std::vector<int>& operator [](int i) const
+ *      Access i'th item.
+ *      Vertex item is a singleton {vertex number}.
+ *      Edge item is a vector {first vertex, second vertex, multiplicity}.
  *****/
-class GraphData {
+class Graph {
 private:
     int v_offset;
     std::set<int> vertex;
     std::vector<std::vector<int>> edge;
 
     std::vector<std::vector<int>> graph_item;
+    std::vector<int> edge_id;
     std::vector<int> vertex_index;
     std::vector<int> edge_index;
     std::vector<int> frontier_index;
-    int f_size;
+    int frontier_size;
+
+    inline void check_offset() const {
+        assert(v_offset >= 0);
+    }
+
+    inline void check_item_index(int i) const {
+        assert(v_offset >= 0);
+        assert(0 <= i and i < get_n_items());
+    }
+
+    inline void check_edge_index(int i) const {
+        assert(v_offset >= 0);
+        assert(0 <= i and i < get_n_items());
+        assert(not is_vertex(i));
+    }
 
 public:
-    GraphData() : v_offset(-1) {}
+    Graph() : v_offset(-1) {}
 
+    /***** for original graph *****/
     bool add_vertex(int v) {
         assert(v >= 0);
         if (vertex.count(v)) return false;
@@ -84,41 +117,41 @@ public:
         v_offset = -1;
     }
 
-    int n_vertices() const {
+    int get_n_vertices() const {
         return vertex.size();
     }
 
-    int n_edges() const {
+    int get_n_edges() const {
         return edge.size();
     }
 
-    int n_items() const {
-        assert(v_offset >= 0);
-        return graph_item.size();
+    const std::vector<int>& get_edge(int i) const {
+        assert(0 <= i and i < get_n_edges());
+        return edge[i];
     }
 
-    bool is_vertex(int i) const {
-        assert(v_offset >= 0);
-        assert(0 <= i and i < n_items());
-        return graph_item[i].size() == 1;
-    }
-
-    int edge_multiplicity(int i) const {
-        assert(v_offset >= 0);
-        assert(0 <= i and i < n_items());
-        assert(not is_vertex(i));
+    /***** for after subgraph enumeration *****/
+    int get_multiplicity(int i) const {
+        check_edge_index(i);
         return graph_item[i][2];
     }
 
+    int get_edge_id(int i) const {
+        check_edge_index(i);
+        return edge_id[i];
+    }
+
+    /***** for subgraph enumeration *****/
     void setup() {
         v_offset = *vertex.begin();
-        int n = *vertex.rbegin() + 1, m = n_edges();
+        int n = *vertex.rbegin() + 1, m = get_n_edges();
 
         graph_item.clear();
+        edge_id.clear();
         vertex_index.assign(n, -1);
         edge_index.assign(m, -1);
         frontier_index.assign(n, -1);
-        f_size = 0;
+        frontier_size = 0;
 
         std::vector<int> edge_count(n, 0);
         std::map<std::vector<int>, int> multiplicity;
@@ -139,6 +172,7 @@ public:
             
             graph_item.push_back(edge[i]);
             graph_item.back().push_back(multiplicity[edge[i]]);
+            edge_id.push_back(i);
 
             for (int j = 0; j < 2; ++j) {
                 int v = edge[i][j];
@@ -146,7 +180,7 @@ public:
                     visited[v] = true;
                     int idx = que.top(); que.pop();
                     frontier_index[v] = idx;
-                    f_size = std::max(f_size, idx + 1);
+                    frontier_size = std::max(frontier_size, idx + 1);
                 }
             }
 
@@ -154,17 +188,38 @@ public:
                 int v = edge[i][j];
                 if (edge_count[v] == 0) {
                     graph_item.push_back({v});
+                    edge_id.push_back(-1);
                     que.push(frontier_index[v]);
                 }
             }
         }
     }
 
-    int frontier_size() const {
-        assert(v_offset >= 0);
-        return f_size;
+    int get_n_items() const {
+        check_offset();
+        return graph_item.size();
     }
-}; // class GraphData
+
+    bool is_vertex(int i) const {
+        check_item_index(i);
+        return edge_id[i] >= 0;
+    }
+
+    int get_frontier_size() const {
+        check_offset();
+        return frontier_size;
+    }
+
+    int get_frontier_index(int v) const {
+        assert(0 <= v and v < get_n_vertices());
+        return frontier_index[v];
+    }
+
+    const std::vector<int>& operator [](int i) const {
+        check_item_index(i);
+        return graph_item[i];
+    }
+}; // class Graph
 
 } // namespace sapporo_tdzdd_apps
 

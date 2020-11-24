@@ -50,4 +50,8 @@ int main(int argc, char* argv[]) {
         DdStructure<2> g = to_ddstructure(f);
         cout << (dd == g ? "valid" : "invalid") << endl;
     }
+
+    if (instance_type == "graph") {
+        Graph graph();
+    }
 }

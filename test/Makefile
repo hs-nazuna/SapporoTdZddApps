@@ -16,7 +16,7 @@ OPT     = -std=c++17 -O3 $(INCLUDE) -Wall
 OPT64   = $(OPT) -DB_64
 OBJ     = test.o
 OBJ64   = test64.o
-HPP     = *.hpp
+HPP     = *.hpp ../include/*.hpp ../include/*/*.hpp
 
 all: $(PRG)
 
