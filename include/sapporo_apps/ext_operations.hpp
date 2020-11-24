@@ -3,4 +3,8 @@
 
 #include "ZBDD.h"
 
+namespace sapporo_tdzdd_apps {
+
+} // namespace sapporo_tdzdd_apps
+
 #endif
