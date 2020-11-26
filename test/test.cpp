@@ -20,11 +20,17 @@ int main(int argc, char* argv[]) {
     MessageHandler::showMessages();
 
     if (argc > 1) {
-        cout << "----- Check power set" << endl;
-        ZBDD f = zbdd_power_set(5);
+        cout << "Test power set" << endl;
+        ZBDD f = zbdd_power_set(3);
+
+        cout << "----- TdZdd -----" << endl;
         DdStructure<2> dd = to_ddstructure(f);
-        vector<vector<int>> tdzdd = unfold_zdd(5, dd, true);
+        vector<vector<int>> tdzdd = unfold_tdzdd(3, dd, true);
         for (const vector<int>& ans : tdzdd) dump_array(ans, cout);
+
+        cout << "----- ZBDD -----" << endl;
+        vector<vector<int>> zbdd = unfold_zbdd(3, f, true);
+        for (const vector<int>& ans : zbdd) dump_array(ans, cout);
         return 0;
     }
 
@@ -32,6 +38,8 @@ int main(int argc, char* argv[]) {
     cin >> instance_type;
 
     if (instance_type == "ineq") {
+        cout << "Test inequalities" << endl;
+
         cout << "----- Instance -----" << endl;
         LinearInequalities ineq = read_linear_inequalities(cin);
         ineq.dump(cout);
@@ -42,16 +50,20 @@ int main(int argc, char* argv[]) {
 
         cout << "----- TdZdd -----" << endl;
         DdStructure<2> dd = tdzdd_linear_inequalities(ineq.A, ineq.sign, ineq.b);
-        vector<vector<int>> tdzdd = unfold_zdd(ineq.n_vars, dd, true);
+        vector<vector<int>> tdzdd = unfold_tdzdd(ineq.n_vars, dd, true);
         for (const vector<int>& ans : tdzdd) dump_array(ans, cout);
         
         cout << "----- Check converter -----" << endl;
         ZBDD f = to_zbdd(dd);
         DdStructure<2> g = to_ddstructure(f);
-        cout << (dd == g ? "valid" : "invalid") << endl;
+        assert(dd == g);
+        vector<vector<int>> zbdd = unfold_zbdd(ineq.n_vars, f, true);
+        for (const vector<int>& ans : zbdd) dump_array(ans, cout);
     }
 
     if (instance_type == "graph") {
+        cout << "Test graph data" << endl;
+
         Graph graph = read_graph(cin);
         int n_items = graph.get_n_items();
         cout << graph.get_n_vertices() << " " << graph.get_n_edges() << " " << n_items << endl;
