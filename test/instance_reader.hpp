@@ -53,8 +53,6 @@ sapporo_tdzdd_apps::Graph read_graph(istream& in) {
     for (int i = 0; i < m; ++i) {
         int v0, v1;
         in >> v0 >> v1;
-        graph.add_vertex(v0);
-        graph.add_vertex(v1);
         graph.add_edge(v0, v1);
     }
     graph.setup();

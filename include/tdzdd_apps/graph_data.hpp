@@ -14,10 +14,11 @@ namespace sapporo_tdzdd_apps {
 /*****
  * class Graph
  *      Maintain a graph data (allowing multiple edges).
- *      Assuming that vertex number is non negative.
+ *      Assuming that vertex number is non negative,
+ *      and it does not have to be 0-indexed and continuous.
  *      The graph can be treated as a directed graph such that
  *      an edge v0-v1 corresponds to an arc v0->v1.
- *      Here, an edge a-b and an edge b-a are distinguished.
+ *      Here, a-b and b-a are distinguished.
  *      Note that the multiplicity of edges is treated as the directed version.
  *      So, for undirected graphs, it is to be desired that
  *      v0 < v1 holds for each edge v0-v1.
@@ -25,13 +26,9 @@ namespace sapporo_tdzdd_apps {
  * Graph()
  *      Construct empty graph.
  * 
- * bool add_vertex(int v)
- *      Add a vertex v.
- *      If it already exists, return false. Otherwise, return true.
- * 
  * void add_edge(int v0, int v1)
  *      Add an edge v0-v1.
- *      v0 and v1 must be already added.
+ *      Note that this method take O(log |V|) time.
  * 
  * int get_n_vertices() const
  *      Get the number of vertices.
@@ -44,6 +41,7 @@ namespace sapporo_tdzdd_apps {
  * 
  * void setup()
  *      Setup for subgraph enumeration.
+ *      O(|E| log |V|)
  * 
  * int get_n_items() const
  *      Get the number of items (vertices and edges).
@@ -95,16 +93,9 @@ public:
     Graph() : frontier_size(0) {}
 
     /***** for original graph *****/
-    bool add_vertex(int v) {
-        assert(v >= 0);
-        if (vertex.count(v)) return false;
-        vertex.insert(v);
-        frontier_size = 0;
-        return true;
-    }
-
     void add_edge(int v0, int v1) {
-        assert(vertex.count(v0) and vertex.count(v1));
+        if (vertex.count(v0) == 0) vertex.insert(v0);
+        if (vertex.count(v1) == 0) vertex.insert(v1);
         edge.push_back({v0, v1});
         frontier_size = 0;
     }
