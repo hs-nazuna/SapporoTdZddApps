@@ -28,7 +28,7 @@ namespace sapporo_tdzdd_apps {
  * 
  * void add_edge(int v0, int v1)
  *      Add an edge v0-v1.
- *      Note that this method take O(log |V|) time.
+ *      Note that this method takes O(log |V|) time.
  * 
  * int get_n_vertices() const
  *      Get the number of vertices.
@@ -41,7 +41,7 @@ namespace sapporo_tdzdd_apps {
  * 
  * void setup()
  *      Setup for subgraph enumeration.
- *      O(|E| log |V|)
+ *      Note that this method takes O(|E| log |V|) time.
  * 
  * int get_n_items() const
  *      Get the number of items (vertices and edges).
@@ -68,13 +68,21 @@ namespace sapporo_tdzdd_apps {
  *      {1st vertex, 2nd vertex, multiplicity on items {0, 1, ..., i}}.
  *      This function works after calling setup().
  * 
- * int get_multiplicity(int i) const
+ * int get_edge_multiplicity(int i) const
  *      Get the multiplicity of i'th item on {item 0, item 1, ..., item i}.
  *      Assuming that i'th item is an edge.
  *      This function works after calling setup().
  * 
  * int get_original_edge_index(int i) const
- *      Get the original index of i'th item which must be an edge).
+ *      Get the original index of i'th item which must be an edge.
+ *      This function works after calling setup().
+ * 
+ * int get_item_index_of_vertex(int v) const
+ *      Get the index of vertex v as an item.
+ *      This function works after calling setup().
+ * 
+ * int get_item_index_of_edge(int i) const
+ *      Get the index of i'th edge as an item.
  *      This function works after calling setup().
  *****/
 class Graph {
@@ -83,7 +91,7 @@ private:
     std::vector<std::vector<int>> edge;
 
     std::vector<std::vector<int>> item;
-    std::vector<bool> exist_vertex;
+    std::vector<int> vertex_to_item;
     std::vector<int> edge_to_item;
     std::vector<int> item_to_edge;
     std::vector<int> frontier_index;
@@ -118,13 +126,11 @@ public:
         int n = *vertex.rbegin() + 1, m = get_n_edges();
 
         item.clear();
-        exist_vertex.assign(n, false);
+        vertex_to_item.assign(n, -1);
         edge_to_item.assign(m, -1);
         item_to_edge.clear();
         frontier_index.assign(n, -1);
         frontier_size = 0;
-
-        for (int v : vertex) exist_vertex[v] = true;
 
         std::vector<int> edge_count(n, 0);
         std::map<std::vector<int>, int> multiplicity;
@@ -160,6 +166,7 @@ public:
             for (int j = 0; j < 2; ++j) {
                 int v = edge[i][j];
                 if (edge_count[v] == 0) {
+                    vertex_to_item[v] = item.size();
                     item_to_edge.push_back(-1);
                     item.push_back({v});
                     que.push(frontier_index[v]);
@@ -186,7 +193,8 @@ public:
 
     int get_frontier_index(int v) const {
         assert(frontier_size > 0);
-        assert(exist_vertex[v]);
+        assert(0 <= v and v <= *vertex.rbegin());
+        assert(vertex_to_item[v] >= 0);
         return frontier_index[v];
     }
 
@@ -197,7 +205,7 @@ public:
     }
 
     /***** for after subgraph enumeration *****/
-    int get_multiplicity(int i) const {
+    int get_edge_multiplicity(int i) const {
         assert(frontier_size > 0);
         assert(0 <= i and i < get_n_items());
         assert(not is_vertex(i));
@@ -209,6 +217,19 @@ public:
         assert(0 <= i and i < get_n_items());
         assert(not is_vertex(i));
         return item_to_edge[i];
+    }
+
+    int get_item_index_of_vertex(int v) const {
+        assert(frontier_size > 0);
+        assert(0 <= v and v <= *vertex.rbegin());
+        assert(vertex_to_item[v] >= 0);
+        return vertex_to_item[v];
+    }
+
+    int get_item_index_of_edge(int i) const {
+        assert(frontier_size > 0);
+        assert(0 <= i and i < get_n_edges());
+        return edge_to_item[i];
     }
 }; // class Graph
 
