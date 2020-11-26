@@ -18,6 +18,9 @@ namespace sapporo_tdzdd_apps {
  *      The graph can be treated as a directed graph such that
  *      an edge v0-v1 corresponds to an arc v0->v1.
  *      Here, an edge a-b and an edge b-a are distinguished.
+ *      Note that the multiplicity of edges is treated as the directed version.
+ *      So, for undirected graphs, it is to be desired that
+ *      v0 < v1 holds for each edge v0-v1.
  * 
  * Graph()
  *      Construct empty graph.
@@ -82,6 +85,7 @@ private:
     std::vector<std::vector<int>> edge;
 
     std::vector<std::vector<int>> item;
+    std::vector<bool> exist_vertex;
     std::vector<int> edge_to_item;
     std::vector<int> item_to_edge;
     std::vector<int> frontier_index;
@@ -123,10 +127,13 @@ public:
         int n = *vertex.rbegin() + 1, m = get_n_edges();
 
         item.clear();
+        exist_vertex.assign(n, false);
         edge_to_item.assign(m, -1);
         item_to_edge.clear();
         frontier_index.assign(n, -1);
         frontier_size = 0;
+
+        for (int v : vertex) exist_vertex[v] = true;
 
         std::vector<int> edge_count(n, 0);
         std::map<std::vector<int>, int> multiplicity;
@@ -188,7 +195,7 @@ public:
 
     int get_frontier_index(int v) const {
         assert(frontier_size > 0);
-        assert(0 <= v and v < get_n_vertices());
+        assert(exist_vertex[v]);
         return frontier_index[v];
     }
 

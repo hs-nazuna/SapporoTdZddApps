@@ -52,6 +52,24 @@ int main(int argc, char* argv[]) {
     }
 
     if (instance_type == "graph") {
-        Graph graph();
+        Graph graph = read_graph(cin);
+        int n_items = graph.get_n_items();
+        cout << graph.get_n_vertices() << " " << graph.get_n_edges() << " " << n_items << endl;
+
+        cout << "-----" << endl;
+        for (int i = 0; i < n_items; ++i) {
+            cout << "#" << i << (graph.is_vertex(i) ? " vertex" : " edge") << endl;
+            vector<int> item_i = graph.get_item(i);
+            dump_array(item_i, cout);
+        }
+        
+        cout << "-----" << endl;
+        cout << "frontier_size = " << graph.get_frontier_size() << endl;
+        for (int i = 0; i < n_items; ++i) {
+            if (graph.is_vertex(i)) {
+                int v = graph.get_item(i)[0];
+                cout << v << " " << graph.get_frontier_index(v) << endl;
+            }
+        }
     }
 }
