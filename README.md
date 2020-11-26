@@ -14,13 +14,13 @@
     * [x] DdStructure <--> ZBDD の変換
     * [x] DDの変数順序に合わせたグラフデータの取得
     * [ ] 辺の順序付けを行う Beam Search（優先度：低）
-* SAPPOROBDD の拡張としての新規演算
-  * [x] Power set
-  * [ ] DisjointJoin
-  * [ ] JointJoin
+* SAPPOROBDD の拡張としての新規演算など
+  * [x] Power set の作成
   * [ ] 特定のアイテム集合に着目したZDDへの変換（グラフ制約のZDDから頂点変数だけ抜き出すときなどに便利）
   * [ ] 特定のアイテムを含む/含まない（OnSet などの別名）
   * [ ] 特定のアイテム間の xor
+  * [ ] DisjointJoin（優先度：低）
+  * [ ] JointJoin（優先度：低）
 * 最適化
   * [ ] DP
 
