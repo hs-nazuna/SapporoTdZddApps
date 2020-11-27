@@ -3,7 +3,7 @@
 #include <cassert>
 using namespace std;
 
-#include "../include/sapporo_tdzdd_apps.hpp"
+#include "sapporo_tdzdd_apps/all_apps.hpp"
 #include "instance_reader.hpp"
 #include "naive_enumeration.hpp"
 using namespace sapporo_tdzdd_apps;

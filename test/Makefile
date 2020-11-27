@@ -2,12 +2,14 @@
 TDZDD   = ../../libs/TdZdd-master
 # Path to SAPPOROBDD
 SAPPORO = ../../libs/SAPPOROBDD20180619
+# Path to SapporoTdZddApps
+APPS = ../
 
 CC      = g++
 
 LIB     = $(SAPPORO)/lib/BDD.a
 LIB64   = $(SAPPORO)/lib/BDD64.a
-INCLUDE = -I$(TDZDD)/include -I$(SAPPORO)/include
+INCLUDE = -I$(TDZDD)/include -I$(SAPPORO)/include -I$(APPS)/include
 
 PRG     = test
 PRG64   = test64
@@ -16,7 +18,7 @@ OPT     = -std=c++17 -O3 $(INCLUDE) -Wall
 OPT64   = $(OPT) -DB_64
 OBJ     = test.o
 OBJ64   = test64.o
-HPP     = *.hpp ../include/*.hpp ../include/*/*.hpp
+HPP     = *.hpp
 
 all: $(PRG)
 

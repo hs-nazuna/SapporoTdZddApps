@@ -1,7 +1,7 @@
 #ifndef SAPPORO_TDZDD_APPS_INSTANCE_READER_HPP
 #define SAPPORO_TDZDD_APPS_INSTANCE_READER_HPP
 
-#include "../include/tdzdd_apps/graph_data.hpp"
+#include "sapporo_tdzdd_apps/tdzdd_apps/graph_data.hpp"
 
 #include <vector>
 #include <string>
