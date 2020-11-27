@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <functional>
 #include <cassert>
-#include "ext_operations.hpp"
+#include "for_sapporo/ext_operations.hpp"
 
 namespace sapporo_tdzdd_apps {
 

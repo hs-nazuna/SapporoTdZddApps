@@ -2,9 +2,9 @@
 #define SAPPORO_TDZDD_APPS_TDZDD_FUNCS_HPP
 
 #include <tdzdd/DdStructure.hpp>
-#include "graph_data.hpp"
-#include "graph_specs.hpp"
-#include "linear_specs.hpp"
+#include "for_tdzdd/graph_data.hpp"
+#include "for_tdzdd/graph_specs.hpp"
+#include "for_tdzdd/linear_specs.hpp"
 
 namespace sapporo_tdzdd_apps {
 
