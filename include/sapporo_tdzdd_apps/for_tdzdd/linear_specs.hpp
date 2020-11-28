@@ -1,17 +1,16 @@
 #ifndef SAPPORO_TDZDD_APPS_LINEAR_SPECS_HPP
 #define SAPPORO_TDZDD_APPS_LINEAR_SPECS_HPP
 
-// cpp default headers
 #include <vector>
 #include <string>
 #include <algorithm>
-
-// additional headers
 #include <tdzdd/DdSpec.hpp>
 
 namespace sapporo_tdzdd_apps {
 
-// Spec for linear inequalities Ax {<=,=,>=} b
+/*****
+ * class LinearIneqSpec
+ *****/
 class LinearIneqSpec : public tdzdd::PodArrayDdSpec<LinearIneqSpec, int, 2> {
 private:
     const int n_vars;

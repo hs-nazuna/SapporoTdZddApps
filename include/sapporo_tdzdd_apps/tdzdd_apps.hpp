@@ -8,6 +8,12 @@
 
 namespace sapporo_tdzdd_apps {
 
+/*****
+ * tdzdd_linear_inequalities(A, sign, b)
+ *      Construct DdStructure of all the 0-1 valid assignments satisfying
+ *      all the given linear inequalities (Ax sign b).
+ *      Inequality sings can be different for each row.
+ *****/
 tdzdd::DdStructure<2> tdzdd_linear_inequalities(
     const std::vector<std::vector<int>>& A,
     const std::vector<std::string>& sign,
@@ -19,7 +25,13 @@ tdzdd::DdStructure<2> tdzdd_linear_inequalities(
     return dd;
 }
 
-std::vector<std::vector<int>> unfold_tdzdd(
+/*****
+ * unfold_ddstructure(n_vars, dd, sorted)
+ *      Unfold a given DdStructure over n_vars variables.
+ *      Each vector in return value represents a subset.
+ *      If sorted = true, subsets are sorted in lexicographical order.
+ *****/
+std::vector<std::vector<int>> unfold_ddstructure(
     int n_vars,
     const tdzdd::DdStructure<2>& dd,
     bool sorted = false

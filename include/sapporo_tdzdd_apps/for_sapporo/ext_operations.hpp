@@ -5,8 +5,11 @@
 
 namespace sapporo_tdzdd_apps {
 
-void check_sapporo_vars(int n, int offset = 0) {
-    while (BDD_VarUsed() < n + offset) BDD_NewVar();
+/*****
+ * check_sapporo_vars(n)
+ *****/
+void check_sapporo_vars(int n) {
+    while (BDD_VarUsed() < n) BDD_NewVar();
 }
 
 } // namespace sapporo_tdzdd_apps

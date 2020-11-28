@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 
         cout << "----- TdZdd -----" << endl;
         DdStructure<2> dd = to_ddstructure(f);
-        vector<vector<int>> tdzdd = unfold_tdzdd(3, dd, true);
+        vector<vector<int>> tdzdd = unfold_ddstructure(3, dd, true);
         for (const vector<int>& ans : tdzdd) dump_array(ans, cout);
 
         cout << "----- ZBDD -----" << endl;
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 
         cout << "----- TdZdd -----" << endl;
         DdStructure<2> dd = tdzdd_linear_inequalities(ineq.A, ineq.sign, ineq.b);
-        vector<vector<int>> tdzdd = unfold_tdzdd(ineq.n_vars, dd, true);
+        vector<vector<int>> tdzdd = unfold_ddstructure(ineq.n_vars, dd, true);
         for (const vector<int>& ans : tdzdd) dump_array(ans, cout);
         
         cout << "----- Check converter -----" << endl;
