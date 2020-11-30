@@ -3,8 +3,9 @@
 
 #include <tdzdd/DdStructure.hpp>
 #include "for_tdzdd/graph_data.hpp"
-#include "for_tdzdd/graph_specs.hpp"
-#include "for_tdzdd/linear_specs.hpp"
+#include "for_tdzdd/component_spec.hpp"
+#include "for_tdzdd/degree_spec.hpp"
+#include "for_tdzdd/linear_spec.hpp"
 
 namespace sapporo_tdzdd_apps {
 
