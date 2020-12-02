@@ -47,8 +47,8 @@ public:
         const std::vector<int>& ub,
         bool with_vertex=false
     ) : graph(graph), lb(lb), ub(ub), with_vertex(with_vertex) {
-        assert(lb.size() == graph.n_vertices());
-        assert(ub.size() == graph.n_vertices());
+        assert((int)lb.size() == graph.n_vertices());
+        assert((int)ub.size() == graph.n_vertices());
         for (int v = 0; v < graph.n_vertices(); ++v) assert(lb[v] <= ub[v]);
 
         adj.assign(graph.n_vertices(), std::vector<int>());

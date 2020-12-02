@@ -27,6 +27,23 @@ tdzdd::DdStructure<2> tdzdd_linear_inequalities(
 }
 
 /*****
+ * tdzdd__degree_constraints(graph, lb, ub, with_vertex=false)
+ *      Construct DdStructure of all the subgraphs satisfying
+ *      given degree constraints lb_v <= deg_v <= ub_v.
+ *****/
+tdzdd::DdStructure<2> tdzdd_degree_constraints(
+    const Graph& graph,
+    const std::vector<int>& lb,
+    const std::vector<int>& ub,
+    bool with_vertex = false
+) {
+    DegreeSpec spec(graph, lb, ub, with_vertex);
+    tdzdd::DdStructure<2> dd(spec);
+    dd.zddReduce();
+    return dd;
+}
+
+/*****
  * unfold_ddstructure(n_vars, dd, sorted)
  *      Unfold a given DdStructure over n_vars variables.
  *      Each vector in return value represents a subset.
