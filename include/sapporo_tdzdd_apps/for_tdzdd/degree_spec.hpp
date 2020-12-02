@@ -47,11 +47,12 @@ public:
         const std::vector<int>& ub,
         bool with_vertex=false
     ) : graph(graph), lb(lb), ub(ub), with_vertex(with_vertex) {
-        assert((int)lb.size() == graph.n_vertices());
-        assert((int)ub.size() == graph.n_vertices());
-        for (int v = 0; v < graph.n_vertices(); ++v) assert(lb[v] <= ub[v]);
+        int n = graph.max_vertex_number() + 1;
+        assert((int)lb.size() == n);
+        assert((int)ub.size() == n);
+        for (int v = 0; v < n; ++v) assert(lb[v] <= ub[v]);
 
-        adj.assign(graph.n_vertices(), std::vector<int>());
+        adj.assign(graph.max_vertex_number(), std::vector<int>());
         for (int i : graph.edge_vars()) {
             adj[graph[i][0]].push_back(i);
             adj[graph[i][1]].push_back(i);

@@ -30,6 +30,9 @@ namespace sapporo_tdzdd_apps {
  *      Add an edge v0-v1.
  *      Note that this method takes O(log |V|) time.
  * 
+ * int max_vertex_number() const
+ *      Get the maximum vertex number.
+ * 
  * int n_vertices() const
  *      Get the number of vertices.
  * 
@@ -98,6 +101,10 @@ public:
         if (vertex.count(v1) == 0) vertex.insert(v1);
         edge.push_back({v0, v1});
         max_f_size = 0;
+    }
+
+    int max_vertex_number() const {
+        return *vertex.rbegin();
     }
 
     int n_vertices() const {

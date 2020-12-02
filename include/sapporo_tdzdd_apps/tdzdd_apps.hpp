@@ -54,7 +54,7 @@ tdzdd::DdStructure<2> tdzdd_steiner(
     const std::set<int> T,
     bool with_vertex = false
 ) {
-    int n = G.n_vertices(), m = G.n_edges();
+    int n = G.max_vertex_number() + 1, m = G.n_edges();
     std::vector<int> lb(n, 0), ub(n, m);
     for (int v : T) lb[v] = 1;
     return tdzdd_degree_constraints(G, lb, ub, with_vertex);
