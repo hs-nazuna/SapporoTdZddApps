@@ -11,8 +11,8 @@ namespace sapporo_tdzdd_apps {
 
 /*****
  * tdzdd_linear_inequalities(A, sign, b)
- *      Construct DdStructure of all the 0-1 valid assignments satisfying
- *      all the given linear inequalities (Ax sign b).
+ *      Construct DdStructure representing all the 0-1 valid assignments
+ *      each of which satisfies all the given linear inequalities (Ax sign b).
  *      Inequality sings can be different for each row.
  *****/
 tdzdd::DdStructure<2> tdzdd_linear_inequalities(
@@ -27,20 +27,37 @@ tdzdd::DdStructure<2> tdzdd_linear_inequalities(
 }
 
 /*****
- * tdzdd__degree_constraints(graph, lb, ub, with_vertex=false)
- *      Construct DdStructure of all the subgraphs satisfying
- *      given degree constraints lb_v <= deg_v <= ub_v.
+ * tdzdd_degree_constraints(G, lb, ub, with_vertex=false)
+ *      Construct DdStructure representing all the valid subgraphs of G
+ *      each of which satisfies a given degree constraint
+ *      lb_v <= deg_v <= ub_v for each vertex.
  *****/
 tdzdd::DdStructure<2> tdzdd_degree_constraints(
-    const Graph& graph,
+    const Graph& G,
     const std::vector<int>& lb,
     const std::vector<int>& ub,
     bool with_vertex = false
 ) {
-    DegreeSpec spec(graph, lb, ub, with_vertex);
+    DegreeSpec spec(G, lb, ub, with_vertex);
     tdzdd::DdStructure<2> dd(spec);
     dd.zddReduce();
     return dd;
+}
+
+/*****
+ * tdzdd_steiner(G, T, with_vertex=false)
+ *      Construct DdStructure representing all the valid subgraphs of G
+ *      each of which has all the vertices in T.
+ *****/
+tdzdd::DdStructure<2> tdzdd_steiner(
+    const Graph& G,
+    const std::set<int> T,
+    bool with_vertex = false
+) {
+    int n = G.n_vertices(), m = G.n_edges();
+    std::vector<int> lb(n, 0), ub(n, m);
+    for (int v : T) lb[v] = 1;
+    return tdzdd_degree_constraints(G, lb, ub, with_vertex);
 }
 
 /*****
