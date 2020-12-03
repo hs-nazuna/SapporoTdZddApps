@@ -14,6 +14,7 @@ namespace sapporo_tdzdd_apps {
 class DegreeSpec : public tdzdd::PodArrayDdSpec<DegreeSpec, int, 2> {
 private:
     const Graph& G;
+    const int F;
     const std::vector<int>& lb;
     const std::vector<int>& ub;
     const bool with_vertex;
@@ -29,11 +30,13 @@ private:
     }
 
     bool check_conditions(int* mate, int i, int vi, int v) const {
-        if (mate[vi] > ub[v]) return false;
+        int deg = mate[vi] & COMPLETE;
+        if (deg == COMPLETE) return true;
+        if (deg > ub[v]) return false;
         auto it = std::upper_bound(adj[v].begin(), adj[v].end(), i);
-        int max_deg = mate[vi] + (adj[v].end() - it);
+        int max_deg = deg + (adj[v].end() - it);
         if (max_deg < lb[v]) return false;
-        if (lb[v] <= mate[vi] and max_deg <= ub[v]) mate[vi] |= COMPLETE;
+        if (lb[v] <= deg and max_deg <= ub[v]) mate[vi] |= COMPLETE;
         return true;
     }
 
@@ -43,24 +46,24 @@ public:
         const std::vector<int>& lb,
         const std::vector<int>& ub,
         bool with_vertex=false
-    ) : G(G), lb(lb), ub(ub), with_vertex(with_vertex)
+    ) : G(G), F(G.max_frontier_size()),
+        lb(lb), ub(ub), with_vertex(with_vertex)
     {
         int n = G.max_vertex_number() + 1;
         assert((int)lb.size() == n);
         assert((int)ub.size() == n);
         for (int v = 0; v < n; ++v) assert(lb[v] <= ub[v]);
 
-        adj.assign(G.max_vertex_number(), std::vector<int>());
+        adj.assign(n, std::vector<int>());
         for (int i : G.edge_vars()) {
             adj[G[i][0]].push_back(i);
             adj[G[i][1]].push_back(i);
         }
         
-        setArraySize(G.max_frontier_size());
+        setArraySize(F);
     }
 
     int getRoot(int* mate) const {
-        int F = G.max_frontier_size();
         for (int i = 0; i < F; ++i) mate[i] = 0;
         return G.n_items();
     }
