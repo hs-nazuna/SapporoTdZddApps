@@ -16,7 +16,7 @@ namespace sapporo_tdzdd_apps {
  *****/
 class DegreeSpec : public tdzdd::PodArrayDdSpec<DegreeSpec, int, 2> {
 private:
-    const Graph& graph;
+    const Graph& G;
     const std::vector<int>& lb;
     const std::vector<int>& ub;
     const bool with_vertex;
@@ -42,44 +42,48 @@ private:
 
 public:
     DegreeSpec(
-        const Graph& graph,
+        const Graph& G,
         const std::vector<int>& lb,
         const std::vector<int>& ub,
         bool with_vertex=false
-    ) : graph(graph), lb(lb), ub(ub), with_vertex(with_vertex) {
-        int n = graph.max_vertex_number() + 1;
+    ) : G(G), lb(lb), ub(ub), with_vertex(with_vertex)
+    {
+        int n = G.max_vertex_number() + 1;
         assert((int)lb.size() == n);
         assert((int)ub.size() == n);
         for (int v = 0; v < n; ++v) assert(lb[v] <= ub[v]);
 
-        adj.assign(graph.max_vertex_number(), std::vector<int>());
-        for (int i : graph.edge_vars()) {
-            adj[graph[i][0]].push_back(i);
-            adj[graph[i][1]].push_back(i);
+        adj.assign(G.max_vertex_number(), std::vector<int>());
+        for (int i : G.edge_vars()) {
+            adj[G[i][0]].push_back(i);
+            adj[G[i][1]].push_back(i);
         }
         
-        setArraySize(graph.max_frontier_size());
+        setArraySize(G.max_frontier_size());
     }
 
     int getRoot(int* mate) const {
-        int F = graph.max_frontier_size();
+        int F = G.max_frontier_size();
         for (int i = 0; i < F; ++i) mate[i] = 0;
-        return graph.n_items();
+        return G.n_items();
     }
 
     int getChild(int* mate, int level, bool take) const {
-        int i = graph.n_items() - level;
+        int i = G.n_items() - level;
         
-        if (graph.is_vertex(i)) {
+        if (G.is_vertex(i)) {
             if (take and not with_vertex) return 0;
-            int vi = graph.frontier_index(graph[i][0]);
-            if (not take and (mate[vi] & TAKE_FLAG) != 0) return 0;
-            if (take and (mate[vi] & TAKE_FLAG) == 0) return 0;
+            // G[i][0] leaves frontier
+            int vi = G.frontier_index(G[i][0]);
+            if (with_vertex) {
+                if (not take and (mate[vi] & TAKE_FLAG) != 0) return 0;
+                if (take and (mate[vi] & TAKE_FLAG) == 0) return 0;
+            }
             mate[vi] = 0;
         }
         else {
-            int u = graph[i][0], v = graph[i][1];
-            int ui = graph.frontier_index(u), vi = graph.frontier_index(v);
+            int u = G[i][0], v = G[i][1];
+            int ui = G.frontier_index(u), vi = G.frontier_index(v);
 
             if (take) {
                 add_degree(mate, ui);

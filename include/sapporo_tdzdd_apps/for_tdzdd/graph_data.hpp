@@ -117,7 +117,7 @@ public:
 
     /***** for subgraph enumeration *****/
     void setup() {
-        int n = *vertex.rbegin() + 1, m = n_edges();
+        int n = max_vertex_number() + 1, m = n_edges();
 
         item.clear();
         v_to_item.assign(n, -1);
@@ -184,7 +184,7 @@ public:
 
     int frontier_index(int v) const {
         assert(max_f_size > 0);
-        assert(0 <= v and v <= *vertex.rbegin());
+        assert(0 <= v and v <= max_vertex_number());
         assert(v_to_item[v] >= 0);
         return f_index[v];
     }
@@ -197,10 +197,12 @@ public:
 
     /***** for after subgraph enumeration *****/
     int var_of_vertex(int v) const {
+        assert(0 <= v and v <= max_vertex_number());
         return v_to_item[v];
     }
 
     int var_of_edge(int i) const {
+        assert(0 <= i and i < n_edges());
         return e_to_item[i];
     }
 
