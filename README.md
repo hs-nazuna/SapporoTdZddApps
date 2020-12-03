@@ -6,7 +6,9 @@
   * グラフ制約（[FrontierBasedSearchWithVetexIndices](https://github.com/hs-nazuna/FrontierBasedSearchWithVertexIndices) の焼き直し）
     * [ ] s-t パス
     * [ ] サイクル
-    * [ ] 連結（木、森を含む）
+    * [ ] 連結成分系（木、森を含む）
+      * [x] 単一成分、木
+      * [ ] 複数成分、森
     * [x] 次数制約
     * [x] シュタイナー制約
   * その他の制約

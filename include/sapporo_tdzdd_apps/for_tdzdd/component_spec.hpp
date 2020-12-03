@@ -107,7 +107,6 @@ public:
                 return -1; // complete
             }
             mate[vi] = INIT;
-            translation(mate);
         }
         else if (take) {
             int u = G[i][0], v = G[i][1];

@@ -10,9 +10,6 @@ namespace sapporo_tdzdd_apps {
 
 /*****
  * class DegreeSpec
- *      Enumerate all subgraphs satisfying degree constraints.
- *      A degree constraint for a vertex must be represented by
- *      a lower bound and an upper bound.
  *****/
 class DegreeSpec : public tdzdd::PodArrayDdSpec<DegreeSpec, int, 2> {
 private:

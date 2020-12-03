@@ -27,6 +27,34 @@ tdzdd::DdStructure<2> tdzdd_linear_inequalities(
 }
 
 /*****
+ * tdzdd_trees(G, with_vertex=false)
+ *      Construct DdStructure representing all the connected components in G.
+ *****/
+tdzdd::DdStructure<2> tdzdd_connected(
+    const Graph& G, 
+    bool with_vertex = false
+) {
+    ConnectedSpec spec(G, false, with_vertex);
+    tdzdd::DdStructure<2> dd(spec);
+    dd.zddReduce();
+    return dd;    
+}
+
+/*****
+ * tdzdd_trees(G, with_vertex=false)
+ *      Construct DdStructure representing all the trees in G.
+ *****/
+tdzdd::DdStructure<2> tdzdd_trees(
+    const Graph& G,
+    bool with_vertex = false
+) {
+    ConnectedSpec spec(G, true, with_vertex);
+    tdzdd::DdStructure<2> dd(spec);
+    dd.zddReduce();
+    return dd;    
+}
+
+/*****
  * tdzdd_degree_constraints(G, lb, ub, with_vertex=false)
  *      Construct DdStructure representing all the valid subgraphs of G
  *      each of which satisfies a given degree constraint
