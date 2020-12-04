@@ -115,6 +115,10 @@ public:
         return edge.size();
     }
 
+    const std::set<int>& vertices() const {
+        return vertex;
+    }
+
     /***** for subgraph enumeration *****/
     void setup() {
         int n = max_vertex_number() + 1, m = n_edges();

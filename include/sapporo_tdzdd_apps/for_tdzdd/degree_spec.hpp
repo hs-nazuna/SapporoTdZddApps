@@ -9,9 +9,10 @@
 namespace sapporo_tdzdd_apps {
 
 /*****
- * class DegreeSpec
+ * class RangeDegreeSpec
  *****/
-class DegreeSpec : public tdzdd::PodArrayDdSpec<DegreeSpec, int, 2> {
+class RangeDegreeSpec :
+    public tdzdd::PodArrayDdSpec<RangeDegreeSpec, int, 2> {
 private:
     const Graph& G;
     const int F;
@@ -41,7 +42,7 @@ private:
     }
 
 public:
-    DegreeSpec(
+    RangeDegreeSpec(
         const Graph& G,
         const std::vector<int>& lb,
         const std::vector<int>& ub,
@@ -92,6 +93,63 @@ public:
 
             if (!check_conditions(mate, i, ui, u)) return 0;
             if (!check_conditions(mate, i, vi, v)) return 0;
+        }
+
+        return (level > 1 ? level - 1 : -1);
+    }
+};
+
+/*****
+ * class DegreeSpec
+ *****/
+class DegreeSpec : public tdzdd::PodArrayDdSpec<DegreeSpec, int, 2> {
+private:
+    const Graph& G;
+    const int F;
+    const std::vector<std::set<int>>& candidates;
+    const bool with_vertex;
+
+public:
+    DegreeSpec(
+        const Graph& G,
+        const std::vector<std::set<int>>& candidates,
+        bool with_vertex = false        
+    ) : G(G), F(G.max_frontier_size()),
+        candidates(candidates), with_vertex(with_vertex) 
+    {
+        int n = G.max_vertex_number() + 1;
+        assert((int)candidates.size() == n);
+        setArraySize(F);
+    }
+
+    int getRoot(int* mate) const {
+        for (int i = 0; i < F; ++i) mate[i] = 0;
+        return G.n_items();
+    }
+
+    int getChild(int* mate, int level, bool take) const {
+        int i = G.n_items() - level;
+
+        if (G.is_vertex(i)) {
+            if (take and not with_vertex) return 0;
+            // G[i][0] leaves frontier
+            int v = G[i][0];
+            int vi = G.frontier_index(v);
+            if (with_vertex) {
+                if (not take and mate[vi] > 0) return 0;
+                if (take and mate[vi] == 0) return 0;
+            }
+            // check component
+            if (candidates[v].count(mate[vi]) == 0) return 0;
+            mate[vi] = 0;
+        }
+        else if (take) {
+            int u = G[i][0], v = G[i][1];
+            int ui = G.frontier_index(u), vi = G.frontier_index(v);
+            ++mate[ui];
+            ++mate[vi];
+            if (*candidates[u].rbegin() < mate[ui]) return 0;
+            if (*candidates[v].rbegin() < mate[vi]) return 0;
         }
 
         return (level > 1 ? level - 1 : -1);

@@ -1,6 +1,7 @@
 #ifndef SAPPORO_TDZDD_APPS_TDZDD_FUNCS_HPP
 #define SAPPORO_TDZDD_APPS_TDZDD_FUNCS_HPP
 
+#include <tdzdd/DdSpecOp.hpp>
 #include <tdzdd/DdStructure.hpp>
 #include "for_tdzdd/graph_data.hpp"
 #include "for_tdzdd/component_spec.hpp"
@@ -27,10 +28,50 @@ tdzdd::DdStructure<2> tdzdd_linear_inequalities(
 }
 
 /*****
+ * tdzdd_st_path(G, s, t, with_vertex=false)
+ *      Construct DdStructure representing all the s-t paths in G.
+ *****/
+tdzdd::DdStructure<2> tdzdd_st_paths(
+    const Graph& G,
+    int s,
+    int t,
+    bool with_vertex = false
+) {
+    int n = G.max_vertex_number() + 1;
+    assert(0 <= s and s < n and 0 <= t and t < n);
+    std::vector<int> lb(n, 0), ub(n, 2);
+    lb[s] = lb[t] = ub[s] = ub[t] = 1;
+    ConnectedSpec cc(G, true, with_vertex);
+    RangeDegreeSpec deg(G, lb, ub, with_vertex);
+    tdzdd::ZddIntersection<decltype(cc), decltype(deg)> spec(cc, deg);
+    tdzdd::DdStructure<2> dd(spec);
+    dd.zddReduce();
+    return dd;
+}
+
+/*****
+ * tdzdd_cycles(G, with_vertex=false)
+ *      Construct DdStructure representing all the cycles in G.
+ *****/
+tdzdd::DdStructure<2> tdzdd_cycles(
+    const Graph& G,
+    bool with_vertex = false
+) {
+    int n = G.max_vertex_number() + 1;
+    std::vector<std::set<int>> candidates(n, {0, 2});
+    ConnectedSpec cc(G, false, with_vertex);
+    DegreeSpec deg(G, candidates, with_vertex);
+    tdzdd::ZddIntersection<decltype(cc), decltype(deg)> spec(cc, deg);
+    tdzdd::DdStructure<2> dd(spec);
+    dd.zddReduce();
+    return dd;
+}
+
+/*****
  * tdzdd_trees(G, with_vertex=false)
  *      Construct DdStructure representing all the connected components in G.
  *****/
-tdzdd::DdStructure<2> tdzdd_connected(
+tdzdd::DdStructure<2> tdzdd_connected_components(
     const Graph& G, 
     bool with_vertex = false
 ) {
@@ -51,7 +92,40 @@ tdzdd::DdStructure<2> tdzdd_trees(
     ConnectedSpec spec(G, true, with_vertex);
     tdzdd::DdStructure<2> dd(spec);
     dd.zddReduce();
-    return dd;    
+    return dd;
+}
+
+/*****
+ * tdzdd_trees(G, T, with_vertex=false)
+ *      Construct DdStructure representing all the steiner trees of T in G.
+ *****/
+tdzdd::DdStructure<2> tdzdd_steiner_trees(
+    const Graph& G,
+    const std::set<int>& T,
+    bool with_vertex = false
+) {
+    int n = G.max_vertex_number() + 1, m = G.n_edges();
+    std::vector<int> lb(n, 0), ub(n, m);
+    for (int v : T) lb[v] = 1;
+    RangeDegreeSpec stnr(G, lb, ub, with_vertex);
+    ConnectedSpec tree(G, true, with_vertex);
+    tdzdd::ZddIntersection<decltype(stnr), decltype(tree)> spec(stnr, tree);
+    tdzdd::DdStructure<2> dd(spec);
+    dd.zddReduce();
+    return dd;
+}
+
+/*****
+ * tdzdd_trees(G, with_vertex=false)
+ *      Construct DdStructure representing all the spanning trees in G.
+ *****/
+tdzdd::DdStructure<2> tdzdd_spanning_trees(
+    const Graph& G,
+    bool with_vertex = false
+) {
+    std::set<int> T;
+    for (int v : G.vertices()) T.insert(v);
+    return tdzdd_steiner_trees(G, T, with_vertex);
 }
 
 /*****
@@ -66,7 +140,7 @@ tdzdd::DdStructure<2> tdzdd_degree_constraints(
     const std::vector<int>& ub,
     bool with_vertex = false
 ) {
-    DegreeSpec spec(G, lb, ub, with_vertex);
+    RangeDegreeSpec spec(G, lb, ub, with_vertex);
     tdzdd::DdStructure<2> dd(spec);
     dd.zddReduce();
     return dd;

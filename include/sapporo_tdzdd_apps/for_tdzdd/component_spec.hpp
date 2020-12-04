@@ -71,10 +71,9 @@ public:
 /*****
  * class ConnectedSpec
  *****/
-class ConnectedSpec
-    : public tdzdd::PodArrayDdSpec<ConnectedSpec, int, 2>,
-      public ComponentSpecBase {
-
+class ConnectedSpec :
+    public tdzdd::PodArrayDdSpec<ConnectedSpec, int, 2>,
+    public ComponentSpecBase {
 public:
     ConnectedSpec(
         const Graph& G,
@@ -115,7 +114,7 @@ public:
             connect(mate, ui, vi);
         }
 
-        return (level > 1 ? level - 1 : 0);
+        return level - 1;
     }
 };
     
