@@ -9,21 +9,10 @@ using namespace std;
 using namespace sapporo_tdzdd_apps;
 using namespace tdzdd;
 
+/***** sub functions *****/
 void dump_array(const vector<int>& v, std::ostream& os) {
     int n = v.size();
     for (int i = 0; i < n; ++i) os << v[i] << (i < n - 1 ? " " : "\n");
-}
-
-void test_powerset() {
-    cout << "Test power set" << endl;
-    for (int n = 1; n <= 10; ++n) {
-        cout << "n = " << n << endl;
-        ZBDD f = zbdd_power_set(n);
-        DdStructure<2> dd = to_ddstructure(f);
-        vector<vector<int>> ans_tdzdd = unfold_ddstructure(n, dd, true);
-        vector<vector<int>> ans_zbdd = unfold_zbdd(n, f, true);
-        assert(ans_tdzdd == ans_zbdd);
-    }
 }
 
 Graph make_complete_graph(int n) {
@@ -46,6 +35,28 @@ Graph make_grid_graph(int n) {
     }
     G.setup();
     return G;
+}
+
+/***** tests *****/
+void test_powerset() {
+    cout << "Test power set" << endl;
+    for (int n = 1; n <= 5; ++n) {
+        cout << "n = " << n << endl;
+        ZBDD f = zbdd_power_set(n);
+        DdStructure<2> dd = to_ddstructure(f);
+        vector<vector<int>> ans_tdzdd = unfold_ddstructure(n, dd, true);
+        vector<vector<int>> ans_zbdd = unfold_zbdd(n, f, true);
+        assert(ans_tdzdd == ans_zbdd);
+        for (const vector<int>& ans : ans_zbdd) dump_array(ans, cout);
+    }
+}
+
+void test_subset() {
+    cout << "Test single subset ZBDD" << endl;
+    vector<int> subset = {1, 2, 5, 8};
+    ZBDD f = zbdd_single_subset(10, subset);
+    vector<vector<int>> ans_zbdd = unfold_zbdd(10, f, true);
+    for (const vector<int>& ans : ans_zbdd) dump_array(ans, cout);
 }
 
 void test_tree_enumeration() {
@@ -131,7 +142,8 @@ int main(int argc, char* argv[]) {
     MessageHandler::showMessages();
     string test_type(argv[1]);
 
-    if (test_type == "-power_set") test_powerset();
+    if (test_type == "-power") test_powerset();
+    if (test_type == "-subset") test_subset();
     if (test_type == "-tree") test_tree_enumeration();
     if (test_type == "-path") test_path_enumeration();
     if (test_type == "-cycle") test_cycle_enumeration();

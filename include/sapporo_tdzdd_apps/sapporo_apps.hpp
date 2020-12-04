@@ -11,13 +11,24 @@ namespace sapporo_tdzdd_apps {
 
 /*****
  * zbdd_power_set(n_vars)
- *      Construct ZBDD for the power set of n_vars items.
+ *      Construct ZBDD representing the power set of n_vars items.
  *****/
 ZBDD zbdd_power_set(int n_vars) {
     check_sapporo_vars(n_vars);
 	ZBDD f(1);
 	for (int i = 0; i < n_vars; ++i) f += f.Change(BDD_VarOfLev(i + 1));
 	return f;
+}
+
+/*****
+ * zbdd_single_subset(n_vars, subset)
+ *      Construct ZBDD representing the given subset.
+ *****/
+ZBDD zbdd_single_subset(int n_vars, const std::vector<int>& subset) {
+    check_sapporo_vars(n_vars);
+    ZBDD f(1);
+    for (int i : subset) f = f.Change(BDD_VarOfLev(n_vars - i));
+    return f;
 }
 
 /*****
