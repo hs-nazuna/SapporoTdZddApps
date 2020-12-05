@@ -53,10 +53,17 @@ void test_powerset() {
 
 void test_subset() {
     cout << "Test single subset ZBDD" << endl;
-    vector<int> subset = {1, 2, 5, 8};
-    ZBDD f = zbdd_single_subset(subset);
+    ZBDD f = zbdd_single_subset({1, 2, 5, 8});
     vector<vector<int>> ans_zbdd = unfold_zbdd(10, f, true);
     for (const vector<int>& ans : ans_zbdd) dump_array(ans, cout);
+}
+
+void test_extraction() {
+    cout << "Test zbdd_extraction" << endl;
+    ZBDD f = zbdd_power_set(5);
+    ZBDD g = zbdd_extraction(f, {1,3,5});
+    vector<vector<int>> ans_zbdd = unfold_zbdd(5, g, true);
+    for (const vector<int>& ans : ans_zbdd) dump_array(ans, cout);    
 }
 
 void test_tree_enumeration() {
@@ -144,6 +151,7 @@ int main(int argc, char* argv[]) {
 
     if (test_type == "-power") test_powerset();
     if (test_type == "-subset") test_subset();
+    if (test_type == "-extract") test_extraction();
     if (test_type == "-tree") test_tree_enumeration();
     if (test_type == "-path") test_path_enumeration();
     if (test_type == "-cycle") test_cycle_enumeration();

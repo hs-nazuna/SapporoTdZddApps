@@ -147,7 +147,7 @@ public:
             ++multiplicity[edge[i]];
             
             e_to_item[i] = item.size();
-            item.push_back({edge[i][0], edge[i][1], multiplicity[edge[i]]});
+            item.push_back({edge[i][0], edge[i][1], multiplicity[edge[i]], i});
 
             for (int j = 0; j < 2; ++j) {
                 int v = edge[i][j];
@@ -200,22 +200,38 @@ public:
     }
 
     /***** for after subgraph enumeration *****/
+    int vertex_of_var(int i) const {
+        assert(max_f_size > 0);
+        assert(item[i].size() == 1);
+        return item[i].back();
+    }
+
+    int edge_of_var(int i) const {
+        assert(max_f_size > 0);
+        assert(item[i].size() == 4);
+        return item[i].back();
+    }
+
     int var_of_vertex(int v) const {
+        assert(max_f_size > 0);
         assert(0 <= v and v <= max_vertex_number());
         return v_to_item[v];
     }
 
     int var_of_edge(int i) const {
+        assert(max_f_size > 0);
         assert(0 <= i and i < n_edges());
         return e_to_item[i];
     }
 
     int sapporo_var_of_vertex(int v) const {
+        assert(max_f_size > 0);
         assert(0 <= v and v <= max_vertex_number());
         return n_items() - v_to_item[v];
     }
 
     int sapporo_var_of_edge(int i) const {
+        assert(max_f_size > 0);
         assert(0 <= i and i < n_edges());
         return n_items() - e_to_item[i];
     }

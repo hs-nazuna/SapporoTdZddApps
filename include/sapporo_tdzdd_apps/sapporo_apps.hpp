@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <functional>
 #include <cassert>
+#include <set>
 #include "for_sapporo/ext_operations.hpp"
 
 namespace sapporo_tdzdd_apps {
@@ -25,11 +26,27 @@ ZBDD zbdd_power_set(int n_vars) {
  *      Construct ZBDD representing the given single subset
  *      which must be a subset of variable numbers on SAPPOROBDD.
  *****/
-ZBDD zbdd_single_subset(const std::vector<int>& subset) {
-    check_sapporo_vars(*std::max_element(subset.begin(), subset.end()));
+ZBDD zbdd_single_subset(const std::vector<int>& S) {
+    check_sapporo_vars(*std::max_element(S.begin(), S.end()));
     ZBDD f(1);
-    for (int i : subset) f = f.Change(i);
+    for (int i : S) f = f.Change(i);
     return f;
+}
+
+/*****
+ * zbdd_extraction(zbdd, targets)
+ *      TODO: description
+ *****/
+ZBDD zbdd_extraction(const ZBDD& zbdd, const std::set<int>& targets) {
+    std::function<ZBDD(const ZBDD&)> rec = [&](const ZBDD& f) {
+        if (f == 0 or f == 1) return f;
+        int i = f.Top();
+        ZBDD f0 = f.OffSet(i), f1 = f.OnSet0(i);
+        ZBDD g0 = rec(f0), g1 = rec(f1);
+        if (targets.count(i) == 1) g1 = g1.Change(i);
+        return g0 + g1;
+    };
+    return rec(zbdd);
 }
 
 /*****
@@ -54,11 +71,10 @@ std::vector<std::vector<int>> unfold_zbdd(
             answer_set.push_back(ans);
             return;
         }
-
-        int level = f.Top();
-        ZBDD f0 = f.OffSet(level), f1 = f.OnSet0(level);
+        int i = f.Top();
+        ZBDD f0 = f.OffSet(i), f1 = f.OnSet0(i);
         dfs(f0, ans);
-        ans.push_back(n_vars - level);
+        ans.push_back(n_vars - i);
         dfs(f1, ans);
         ans.pop_back();
     };
