@@ -2,6 +2,7 @@
 #define SAPPORO_TDZDD_APPS_DEGREE_SPEC_HPP
 
 #include <vector>
+#include <set>
 #include <algorithm>
 #include <tdzdd/DdSpec.hpp>
 #include "graph_data.hpp"
@@ -139,7 +140,7 @@ public:
                 if (not take and mate[vi] > 0) return 0;
                 if (take and mate[vi] == 0) return 0;
             }
-            // check component
+            // check degree
             if (candidates[v].count(mate[vi]) == 0) return 0;
             mate[vi] = 0;
         }
@@ -150,6 +151,57 @@ public:
             ++mate[vi];
             if (*candidates[u].rbegin() < mate[ui]) return 0;
             if (*candidates[v].rbegin() < mate[vi]) return 0;
+        }
+
+        return (level > 1 ? level - 1 : -1);
+    }
+};
+
+/*****
+ * class SteinerSpec
+ *****/
+class SteinerSpec : public tdzdd::PodArrayDdSpec<SteinerSpec, int, 2> {
+private:
+    const Graph& G;
+    const int F;
+    const std::set<int>& T;
+    const bool with_vertex;
+
+public:
+    SteinerSpec(
+        const Graph& G,
+        const std::set<int>& T,
+        bool with_vertex = false
+    ) : G(G), F(G.max_frontier_size()), T(T), with_vertex(with_vertex)
+    {
+        setArraySize(F);
+    }
+
+    int getRoot(int* mate) const {
+        for (int i = 0; i < F; ++i) mate[i] = 0;
+        return G.n_items();
+    }
+
+    int getChild(int* mate, int level, bool take) const {
+        int i = G.n_items() - level;
+
+        if (G.is_vertex(i)) {
+            if (take and not with_vertex) return 0;
+            // G[i][0] leaves frontier
+            int v = G[i][0];
+            int vi = G.frontier_index(v);
+            if (with_vertex) {
+                if (not take and mate[vi] > 0) return 0;
+                if (take and mate[vi] == 0) return 0;
+            }
+            // check terminal
+            if (mate[vi] == 0 and T.count(v) == 1) return 0;
+            mate[vi] = 0;
+        }
+        else if (take) {
+            int u = G[i][0], v = G[i][1];
+            int ui = G.frontier_index(u), vi = G.frontier_index(v);
+            mate[ui] = mate[vi] = 1;
         }
 
         return (level > 1 ? level - 1 : -1);
