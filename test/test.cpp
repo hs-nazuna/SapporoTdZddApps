@@ -54,7 +54,7 @@ void test_powerset() {
 void test_subset() {
     cout << "Test single subset ZBDD" << endl;
     vector<int> subset = {1, 2, 5, 8};
-    ZBDD f = zbdd_single_subset(10, subset);
+    ZBDD f = zbdd_single_subset(subset);
     vector<vector<int>> ans_zbdd = unfold_zbdd(10, f, true);
     for (const vector<int>& ans : ans_zbdd) dump_array(ans, cout);
 }

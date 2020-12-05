@@ -57,9 +57,11 @@ public:
         for (int v = 0; v < n; ++v) assert(lb[v] <= ub[v]);
 
         adj.assign(n, std::vector<int>());
-        for (int i : G.edge_vars()) {
-            adj[G[i][0]].push_back(i);
-            adj[G[i][1]].push_back(i);
+        int m = G.n_edges();
+        for (int i = 0; i < m; ++i) {
+            int ei = G.var_of_edge(i);
+            adj[G[ei][0]].push_back(ei);
+            adj[G[ei][1]].push_back(ei);
         }
         
         setArraySize(F);

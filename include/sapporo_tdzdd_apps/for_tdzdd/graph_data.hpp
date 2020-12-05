@@ -74,11 +74,11 @@ namespace sapporo_tdzdd_apps {
  * int var_of_edge(int i) const
  *      Return the variable number of an edge i.
  * 
- * const std::vector<int>& vertex_vars() const
- *      Get a vector which maps a veterx to its variable number.
+ * int sapporo_var_of_vertex(int v) const
+ *      Return the variable number of a vertex v for SAPPOROBDD.
  * 
- * const std::vector<int>& edge_vars() const
- *      Get a vector which maps an edge to its variable number.
+ * int sapporo_var_of_edge(int i) const
+ *      Return the variable number of an edge i for SAPPOROBDD.
  *****/
 class Graph {
 private:
@@ -210,12 +210,14 @@ public:
         return e_to_item[i];
     }
 
-    const std::vector<int>& vertex_vars() const {
-        return v_to_item;
+    int sapporo_var_of_vertex(int v) const {
+        assert(0 <= v and v <= max_vertex_number());
+        return n_items() - v_to_item[v];
     }
 
-    const std::vector<int>& edge_vars() const {
-        return e_to_item;
+    int sapporo_var_of_edge(int i) const {
+        assert(0 <= i and i < n_edges());
+        return n_items() - e_to_item[i];
     }
 }; // class Graph
 

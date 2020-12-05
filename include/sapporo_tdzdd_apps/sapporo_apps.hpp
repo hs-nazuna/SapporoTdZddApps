@@ -16,18 +16,19 @@ namespace sapporo_tdzdd_apps {
 ZBDD zbdd_power_set(int n_vars) {
     check_sapporo_vars(n_vars);
 	ZBDD f(1);
-	for (int i = 0; i < n_vars; ++i) f += f.Change(BDD_VarOfLev(i + 1));
+	for (int i = 1; i <= n_vars; ++i) f += f.Change(i);
 	return f;
 }
 
 /*****
  * zbdd_single_subset(n_vars, subset)
- *      Construct ZBDD representing the given subset.
+ *      Construct ZBDD representing the given single subset
+ *      which must be a subset of variable numbers on SAPPOROBDD.
  *****/
-ZBDD zbdd_single_subset(int n_vars, const std::vector<int>& subset) {
-    check_sapporo_vars(n_vars);
+ZBDD zbdd_single_subset(const std::vector<int>& subset) {
+    check_sapporo_vars(*std::max_element(subset.begin(), subset.end()));
     ZBDD f(1);
-    for (int i : subset) f = f.Change(BDD_VarOfLev(n_vars - i));
+    for (int i : subset) f = f.Change(i);
     return f;
 }
 
