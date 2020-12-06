@@ -70,10 +70,8 @@ private:
                     int r = node.row(), c = node.col();
                     if (r == 0 and c == 0) continue;
                     T val = best[r][c] + (b == 1 ? cost[n - i] : 0);
-                    if (best[i][j] == val) {
-                        if (b == 0) ans[i][j] += ans[r][c];
-                        if (b == 1) ans[i][j] += ans[r][c].Change(i);
-                    }
+                    if (best[i][j] > val) continue;
+                    ans[i][j] += (b == 0 ? ans[r][c] : ans[r][c].Change(i));
                 }
             }
         }
