@@ -26,7 +26,7 @@
   * [ ] DisjointJoin（優先度：低）
   * [ ] JointJoin（優先度：低）
 * 最適化
-  * [ ] DP
+  * [x] 線形最適化のDP
 * その他の機能
   * [x] DdStructure の解凍
   * [x] ZBDD の解凍
