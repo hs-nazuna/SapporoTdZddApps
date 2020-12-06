@@ -144,6 +144,20 @@ void test_cycle_enumeration() {
     }    
 }
 
+void test_linear_optimization() {
+    vector<vector<int>> A = {{1, 2, 1, 2, 1, 2, 1}};
+    vector<string> sign = {"<="};
+    vector<int> b = {5};
+    DdStructure<2> dd = tdzdd_linear_inequalities(A, sign, b);
+    vector<int> cost = {2, 3, 1, 1, 2, 4, 1};
+    LinearOptimization<int> opt;
+    opt.set_dd(dd);
+    auto res = opt.optimize(cost);
+    cout << res.first << endl;
+    vector<vector<int>> ans = unfold_zbdd(7, res.second);
+    for (vector<int> X : ans) dump_array(X, cout);
+}
+
 int main(int argc, char* argv[]) {
     bddinit(10000, 1000000);
     MessageHandler::showMessages();
@@ -155,4 +169,5 @@ int main(int argc, char* argv[]) {
     if (test_type == "-tree") test_tree_enumeration();
     if (test_type == "-path") test_path_enumeration();
     if (test_type == "-cycle") test_cycle_enumeration();
+    if (test_type == "-linear") test_linear_optimization();
 }
