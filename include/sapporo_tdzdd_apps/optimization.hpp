@@ -86,9 +86,9 @@ public:
 
     std::pair<T, ZBDD> optimize(
         const std::vector<int>& cost,
-        std::string dir = "maximize"
+        std::string direction = "maximize"
     ) {
-        return bottom_up_dp(cost, dir == "maximize" ? 1 : -1);
+        return bottom_up_dp(cost, direction == "maximize" ? 1 : -1);
     }
 };
 
